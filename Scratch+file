@@ -1,0 +1,9 @@
+unsigned long time;
+
+time = (millis() + dash);
+
+
+do{
+tone(1000);
+}
+while millis()>time;
