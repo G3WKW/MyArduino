@@ -122,28 +122,19 @@ void write2PLL(uint32_t PLLword) {         // clocks 32 bits word  directly to t
 } */
 void dit()
 
-{time =(millis() + dotlen);
-do{
-    tone();
-    
-}
-while (millis() < time);
-write2PLL(r4 & 0xffffffdf);
-  delay(dotlen);
+{
+    am_tone(1000,dotlen);
+    delay(dotlen);
+
 }
 
 
 
 // Routine to output a dah
 void dash()
-{time =(millis() + dashlen);
-do{
-    tone();
-    
-}
-while (millis() < time);
-write2PLL(r4 & 0xffffffdf);
-  delay(dotlen);
+{
+    am_tone(1000,dashlen);
+    delay(dotlen);
 }
 
 
@@ -154,23 +145,37 @@ write2PLL(r4 & 0xffffffdf);
   delay(dotlen);
 } */
 
-// Routine to generate AM
-void tone()
+//Turn transmitter on
+void TxOn()
+{ write2PLL(r4);
+  }
+  
+//Turn transmitter off
+void TxOff()
+{ write2PLL(r4 & 0xffffffdf);
+  }
+  
+// Routine to generate AM tone modulated at pitch Hertz for duration milliseconds finishing at full power
+
+void am_tone(int pitch, int duration)
 {
- interval = (166000/1000);
+  time =(millis() + duration);
+do{
+ interval = (166000/pitch);
+ write2PLL(r4 & 0xfffffff7);
+ delayMicroseconds(interval);
+ write2PLL(r4 & 0xffffffef);
+ delayMicroseconds(interval);
  write2PLL(r4 & 0xffffffe7);
  delayMicroseconds(interval);
  write2PLL(r4 & 0xffffffef);
  delayMicroseconds(interval);
  write2PLL(r4 & 0xfffffff7);
  delayMicroseconds(interval);
- write2PLL(r4 & 0xffffffff);
+ write2PLL(r4);
  delayMicroseconds(interval);
- write2PLL(r4 & 0xfffffff7);
- delayMicroseconds(interval);
- write2PLL(r4 & 0xffffffef);
- delayMicroseconds(interval);
- 
+ }
+while (millis() < time);
  }
 
 // Look up a character in the tokens array and send it
@@ -247,6 +252,7 @@ PORTB = 0x00; // make PB low
 void loop() {                                 
       delay(800);                         
       sendmsg(str);
+      TxOff();
       delay(350);                         // pause after beacon text
       write2PLL(r4);                     // then TX on 
       delay(5000);                       // 5 seconds TX
