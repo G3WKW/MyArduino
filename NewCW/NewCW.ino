@@ -243,7 +243,7 @@ PORTB = 0x00; // make PB low
      dotlen = (1200 / speed);
      dashlen = (3 * (1200 / speed));
 //     str = "OK1CDJ/B JO70VA"; 
-     str = "G3WKW IO91OG";
+     str = "DE G3WKW IO91OG";
      write2PLL(r4 & 0xffffffdf);        // TX off 
      
 }
