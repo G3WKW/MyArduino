@@ -64,8 +64,14 @@ long channel[13]; // Kanal-speicher
 long Step[5]; // Kanalraster-speicher
 int CHnum = 0; // eingestellter Kanal
 int StepNum = 0; // eingestelltes Kanalraster
-unsigned long Reg[6]; //ADF4351 Reg's
-
+unsigned long Reg[6]; //ADF4351 Reg's 
+String MenuArray[2][2]={
+{" AM Tone Mod OFF"," Something OFF  "},
+{" AM Tone Mod ON "," Something ON   "}
+  
+};
+int MenuValue[2]={0,0};
+int MenuSize = 2;
 byte tenHz, hundredHz, ones, tens, hundreds, thousands, tenthousands, hundredthousands, millions; 
 
 int lcd_key     = 0;
@@ -84,7 +90,7 @@ void setup() {
   lcd.print("ADF4350 - OE6OCG");
   lcd.setCursor(0, 1);
   lcd.print(" Mod by G3WKW  ");
-  delay(6000);
+  delay(1000);
 
     Serial.begin(9600);// USB to PC for Debug only
     Serial.print("Debug Mode enabled\n");
@@ -130,7 +136,7 @@ void setup() {
         lcd.print(ShowStep);
 
   lcd.setCursor(12, 1);
-  lcd.print(" Mhz");// print Mhz
+  lcd.print(" MHz");// print Mhz
 
   SetFreq(Freq);
 }
@@ -216,6 +222,7 @@ void loop() {
     case btnMENU:
       {
         Serial.println("MENU SELECTED  ");
+        ConfigMenu();
         break;
       }
       
@@ -439,21 +446,30 @@ void showFreq(long FREQ) {
   if (millions > 0) {
     lcd.setCursor(0, 1);
     lcd.print(millions);
-    lcd.print(".");
+   // lcd.print(",");
   }
   else {
-    lcd.setCursor(2, 1);
+    lcd.setCursor(1, 1);
   }
   lcd.print(hundredthousands);
   lcd.print(tenthousands);
   lcd.print(thousands);
-  lcd.print(",");
+  lcd.print(".");
   lcd.print(hundreds);
   lcd.print(tens);
   lcd.print(ones);
-  lcd.print(".");
+  //lcd.print(".");
   lcd.print(hundredHz);
   lcd.print(tenHz);
+  lcd.print(" MHz  ");
+};
+
+void ConfigMenu(){
+  //Serial.println("In the Config Menu");
+  lcd.setCursor(0,0);
+  lcd.print("  Config. Menu  ");
+  lcd.setCursor(0,1);
+  lcd.print(MenuArray[0][MenuValue[0]]);  ///now need to use the buttons to scroll and alter values
 };
 
 // as PLL-Register Referenz
