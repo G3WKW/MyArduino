@@ -71,13 +71,15 @@ int adc_key_in  = 0;
 #define btnLEFT   3
 #define btnSELECT 4
 #define btnNONE   5
+#define btnMENU   6
 
 void setup() {
   lcd.begin(16, 2);
   lcd.setCursor(0, 0);
   lcd.print(" ADF4350  OE6OCG");
 
-  //  Serial.begin(115200);// USB to PC for Debug only
+    Serial.begin(9600);// USB to PC for Debug only
+    Serial.print("Debug Mode enabled\n");
   pinMode (slaveSelectPin, OUTPUT);
   digitalWrite(slaveSelectPin, LOW);
   SPI.setDataMode(SPI_MODE0);
@@ -195,6 +197,12 @@ void loop() {
         //lcd.print("NONE  ");
         break;
       }
+    case btnMENU:
+      {
+        Serial.println("MENU SELECTED  ");
+        break;
+      }
+      
   }
   adc_key_in = analogRead(0); // verhindert scannen wenn taste zulange gedrückt wird
   delay(20);
@@ -213,7 +221,17 @@ int read_LCD_buttons()
   if (adc_key_in < 195)  return btnUP;
   if (adc_key_in < 380)  return btnDOWN;
   if (adc_key_in < 555)  return btnLEFT;
-  if (adc_key_in < 790)  return btnSELECT;
+  if (adc_key_in < 790) {
+    long int longpress = (millis() + 500); 
+    while(millis()<longpress){      // during 500milliseconds
+    //Serial.println(longpress);    //  debug
+    adc_key_in = analogRead(0);    // check if released
+    if (adc_key_in > 1000) return btnSELECT;  //and if so seect
+    delay(50);
+    }
+    //Serial.println("longpress");  //debug
+    return btnMENU;   //  but after 500 select MENU
+    }
   return btnNONE;
 }
 
@@ -429,4 +447,3 @@ void showFreq(long FREQ) {
 // R[3] = (0x000004B3);
 // R[4] = (0x00BC8024);
 // R[5] = (0x00580005);
-
