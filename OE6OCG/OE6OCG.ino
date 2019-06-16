@@ -13,6 +13,11 @@
 //
 // IDE: Arduino 1.5.4 or up without spec. Library
 // License: Free or a gift to Paypal oe6ocg@aon.at
+//
+// 16/6/2019 modifications by G3WKW
+// long press (>500 milliseconds) of SELECT will start a menu
+// plan to add AM tone modulation
+// Tx Rx Switched frequencies
 //*****************************************************************
 /*                                               Hardware connection Uno to PLL-Board (3.3V logic)
                                   +-----+
@@ -76,7 +81,10 @@ int adc_key_in  = 0;
 void setup() {
   lcd.begin(16, 2);
   lcd.setCursor(0, 0);
-  lcd.print(" ADF4350  OE6OCG");
+  lcd.print("ADF4350 - OE6OCG");
+  lcd.setCursor(0, 1);
+  lcd.print(" Mod by G3WKW  ");
+  delay(6000);
 
     Serial.begin(9600);// USB to PC for Debug only
     Serial.print("Debug Mode enabled\n");
@@ -108,12 +116,18 @@ void setup() {
   channel[11] = 300000000;
   channel[12] = 440000000; // 4.4Ghz
 
-  lcd.setCursor(0, 0);
-  lcd.print("         ");
-  lcd.setCursor(0, 0);
-  lcd.print("S=");
-  lcd.print(ChanStep);
-  lcd.print("0");
+  //lcd.setCursor(0, 0);
+  //lcd.print("         ");
+ // lcd.setCursor(0, 0);
+ // lcd.print("S=");
+ // lcd.print(ChanStep);
+ // lcd.print("0");
+        lcd.setCursor(0, 0);
+        lcd.print("       ");
+        lcd.setCursor(0, 0);
+        float DisplayStep = ChanStep/100.00;
+        String ShowStep = "Step=" + String(DisplayStep) + " kHz      ";
+        lcd.print(ShowStep);
 
   lcd.setCursor(12, 1);
   lcd.print(" Mhz");// print Mhz
@@ -160,11 +174,13 @@ void loop() {
         StepNum += 1;
         if (StepNum > 4) StepNum = 0;
         ChanStep = Step[StepNum];
-        lcd.setCursor(2, 0);
+        lcd.setCursor(0, 0);
         lcd.print("       ");
-        lcd.setCursor(2, 0);
-        lcd.print(ChanStep);
-        lcd.print("0");
+        lcd.setCursor(0, 0);
+        float DisplayStep = ChanStep/100.00;
+        String ShowStep = "Step=" + String(DisplayStep) + " kHz      ";
+        lcd.print(ShowStep);
+       // lcd.print(" kHz      ");
         // render Frequenz nach Raster
         SetFreq(Freq);
         delay(200);
