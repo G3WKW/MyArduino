@@ -468,6 +468,12 @@ void ConfigMenu(){
   //Serial.println("In the Config Menu");
   lcd.setCursor(0,0);
   lcd.print("  Config. Menu  ");
+  lcd_key = read_LCD_buttons();
+  while (lcd_key!=btnNONE){
+        lcd_key = read_LCD_buttons();    //wait for the long press to be released
+        delay(20);
+  };
+  
   lcd.setCursor(0,1);
   lcd.print(MenuArray[0][MenuValue[0]]);  ///now need to use the buttons to scroll and alter values
 };
