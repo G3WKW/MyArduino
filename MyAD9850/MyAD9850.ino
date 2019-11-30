@@ -5,8 +5,8 @@ const int FQ_UD_PIN = 8;
 const int DATA_PIN = 9;
 const int RESET_PIN = 10;
 double freq=10000000;
-double rxfreq = 51833333;
-double txfreq = 8055000;
+double rxfreq = 144.950;
+double txfreq = 144.950;
 double trimFreq = 124999570;
 
 int phase = 0;
@@ -16,22 +16,20 @@ void setup(){
   pinMode(LED_BUILTIN, OUTPUT);
   DDS.begin(W_CLK_PIN, FQ_UD_PIN, DATA_PIN, RESET_PIN);
   DDS.calibrate(trimFreq);
+   DDS.up();
 }
 
 void loop(){
-  freq=txfreq;
+  freq=(rxfreq - 10.7)*1000000/12;
   DDS.setfreq(freq, phase);
-  delay(10000);
-  DDS.down();
   digitalWrite(LED_BUILTIN, LOW); 
-  delay(3000);
-  DDS.up();
-  
-  delay(2000);
-  freq=rxfreq;
+  while(!digitalRead(TX));
+ 
+  freq=txfreq*1000000/16;
   DDS.setfreq(freq, phase);
   digitalWrite(LED_BUILTIN, HIGH); 
-  delay(500000);
-  DDS.down();
-  while(1);
+  while(digitalRead(TX));
+  
+  
+ 
 }
